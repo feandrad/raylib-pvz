@@ -20,12 +20,18 @@ const float seedProgressMax = 100.0f;
 const float seedTime = 5.0f;
 const float seedIncrement = seedProgressMax / seedTime;
 
+const float nextWaveMax = 100.0f;
+float nextWave = 10.0f;
+const float nextWaveIncrement = nextWaveMax / nextWave;
+
 // Game Variables
 std::vector<Zombie> zombies;
 std::vector<Rectangle> projectiles;
 std::vector<Placeable> plants;
 int seedCount = 0;
 float seedProgress = 0;
+int waveCount = 0;
+float nextWaveProgress = 0;
 
 Placeable* board[gridRows][gridCols];
 Gui* gui;

@@ -1,18 +1,14 @@
 #include "Gui.h"
 #include <iostream>
 
-void Gui::Draw(float percent)
-{
-    DrawRectangle(10, 10, barMaxWidth, barHeight, GRAY);
-    DrawRectangle(10, 10, barMaxWidth * percent, barHeight, ORANGE);
+void Gui::Draw(float seedRate, float waveRate) {
+    DrawRectangle(10, 10, seedMaxWidth, barHeight, GRAY);
+    DrawRectangle(10, 10, seedMaxWidth * seedRate, barHeight, ORANGE);
+
+    DrawRectangle(100, 10, waveMaxWidth, barHeight, GRAY);
+    DrawRectangle(100, 10, waveMaxWidth * waveRate, barHeight, RED);
 }
 
-void Gui::Update(float deltaTime)
-{
-    if (barWidth < barMaxWidth)
-    {
-        barWidth += fillSpeed * deltaTime;
-        if (barWidth > barMaxWidth)
-            barWidth == barMaxWidth;
-    }
+void Gui::Update(float deltaTime) {
+
 }

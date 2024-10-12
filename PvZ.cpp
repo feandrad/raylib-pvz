@@ -58,11 +58,22 @@ void UpdateSeed(float deltaTime) {
     }
 }
 
+void UpdateWave(float deltaTime) {
+    nextWaveProgress += nextWaveIncrement * deltaTime;
+    if (nextWaveProgress >= nextWaveMax) {
+        nextWaveProgress = 0;
+        waveCount++;
+    }
+}
+
 void DrawGame() {
     DrawCheckerboard();
-    gui->Draw(seedProgress / seedProgressMax);
+    gui->Draw(seedProgress / seedProgressMax, nextWaveProgress / nextWaveMax);
     DrawText(TextFormat("Seeds: %d", seedCount), 10, 10, 10, MAROON);
-    DrawText(TextFormat("Progress: %f", seedProgress), 10, 20, 10, MAROON);
+    DrawText(TextFormat("Seed Progress: %f", seedProgress), 10, 20, 10, MAROON);
+
+    DrawText(TextFormat("Wave: %d", waveCount), 10, 30, 10, MAROON);
+    DrawText(TextFormat("Wave Progress: %f", nextWaveProgress), 10, 40, 10, MAROON);
 }
 
 void GameLoop() {
@@ -70,6 +81,7 @@ void GameLoop() {
 
     UpdateBoard(deltaTime);
     UpdateSeed(deltaTime);
+    UpdateWave(deltaTime);
     gui->Update(deltaTime);
 
     BeginDrawing();
