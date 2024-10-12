@@ -4,7 +4,6 @@
 
 static const int leftColumnWidth = 100;
 
-
 class Gui {
 public:
     float barMaxWidth = leftColumnWidth - 20;
@@ -12,6 +11,10 @@ public:
     float barHeight = 10;
     float fillSpeed = 10;
 
-    void Draw();
-    void Update (float deltaTime);
+    Font* font;
+
+    Gui(Font* font) : font(font) {}
+
+    void Draw(float percent);
+    void Update(float deltaTime);
 };

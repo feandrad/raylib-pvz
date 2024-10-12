@@ -47,6 +47,7 @@ add_executable(${PROJECT_NAME}
     Seed.h
     Zombie.cpp
     Zombie.h
+    res/pixantiqua.png
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

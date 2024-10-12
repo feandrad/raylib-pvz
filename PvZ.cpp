@@ -1,5 +1,13 @@
-// PvZ.cpp
 #include "PvZ.h"
+#include <iostream>
+
+void LoadResources() {
+    // std::cout << "Open Font..." << std::endl;
+    // std::cin.get(); // Wait for user input
+
+    Font font = LoadFont("res/pixantiqua.png");
+    gui = new Gui(&font);
+}
 
 void InitGame() {
     // Initialize the grid
@@ -11,9 +19,6 @@ void InitGame() {
 }
 
 void DrawCheckerboard() {
-    // Calculate the total height of the checkerboard
-    int totalHeight = gridRows * cellSize;
-
     // Calculate the starting Y position to center the checkerboard
     int startY = (GetScreenHeight() - totalHeight) / 2;
 
@@ -45,26 +50,41 @@ void UpdateBoard(float deltaTime) {
     }
 }
 
+void UpdateSeed(float deltaTime) {
+    seedProgress += seedIncrement * deltaTime;
+    if (seedProgress >= seedProgressMax) {
+        seedProgress = 0;
+        seedCount++;
+    }
+}
+
 void DrawGame() {
     DrawCheckerboard();
-    gui->Draw();
+    gui->Draw(seedProgress / seedProgressMax);
+    DrawText(TextFormat("Seeds: %d", seedCount), 10, 10, 10, MAROON);
+    DrawText(TextFormat("Progress: %f", seedProgress), 10, 20, 10, MAROON);
 }
 
 void GameLoop() {
     float deltaTime = GetFrameTime();
 
     UpdateBoard(deltaTime);
+    UpdateSeed(deltaTime);
     gui->Update(deltaTime);
 
     BeginDrawing();
+
     ClearBackground(RAYWHITE);
     DrawGame();
+    
     EndDrawing();
 }
 
 int main() {
     InitWindow(screenWidth, screenHeight, "Plants vs Zombies-like Game - Checkerboard Field and Seed Bar");
     SetTargetFPS(60);
+
+    LoadResources();
 
     InitGame();
 

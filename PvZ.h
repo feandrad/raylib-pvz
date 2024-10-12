@@ -14,13 +14,21 @@ const int screenHeight = 450;
 const int gridRows = 5;
 const int gridCols = 7;
 const int cellSize = 80;
+const int totalHeight = gridRows * cellSize;
+
+const float seedProgressMax = 100.0f;
+const float seedTime = 5.0f;
+const float seedIncrement = seedProgressMax / seedTime;
 
 // Game Variables
 std::vector<Zombie> zombies;
 std::vector<Rectangle> projectiles;
+std::vector<Placeable> plants;
+int seedCount = 0;
+float seedProgress = 0;
 
 Placeable* board[gridRows][gridCols];
-Gui* gui = new Gui();
+Gui* gui;
 
 // Function Declarations
 void InitGame();
