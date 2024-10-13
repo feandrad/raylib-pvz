@@ -14,10 +14,17 @@ Zombie::Zombie(float x, float y, float speed, int health) {
     this->health = health;
 }
 
-void Zombie::Update(float deltaTime) {
-    rec.x -= speed * deltaTime;  
-}
-
 bool Zombie::IsDead() {
     return health <= 0;
+}
+
+void Zombie::Draw() const {
+    float centerX = rec.x + rec.width / 2;
+    float centerY = rec.y + rec.height / 2;
+
+    DrawCircle(centerX, centerY, 30, color);  
+}
+
+void Zombie::Update(float deltaTime) {
+    rec.x -= speed * deltaTime;  
 }

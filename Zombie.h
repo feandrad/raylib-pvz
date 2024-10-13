@@ -1,8 +1,9 @@
 #pragma once
 
 #include "raylib.h"
+#include "Entity.h"
 
-class Zombie {
+class Zombie : Entity {
 public:
     Rectangle rec;
     Color color;
@@ -12,6 +13,8 @@ public:
     Zombie();  
     Zombie(float x, float y, float speed, int health);  
 
-    void Update(float deltaTime);  
     bool IsDead();  
+
+    void Draw() const override;
+    void Update(float deltaTime) override;
 };

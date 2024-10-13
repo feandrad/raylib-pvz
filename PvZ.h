@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 #include "Gui.h"
-#include "Placeable.h"
+#include "Entity.h"
 #include "Plant.h"
 #include "Seed.h"
 #include "Zombie.h"
@@ -25,15 +25,15 @@ float nextWave = 10.0f;
 const float nextWaveIncrement = nextWaveMax / nextWave;
 
 // Game Variables
-std::vector<Zombie> zombies;
-std::vector<Rectangle> projectiles;
-std::vector<Placeable> plants;
+std::vector<Zombie*> zombies;
+std::vector<Entity*> plants;
+std::vector<Entity*> projectiles;
 int seedCount = 0;
 float seedProgress = 0;
 int waveCount = 0;
 float nextWaveProgress = 0;
 
-Placeable* board[gridRows][gridCols];
+Entity* board[gridRows][gridCols];
 Gui* gui;
 Font font;
 

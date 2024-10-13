@@ -1,10 +1,10 @@
 #pragma once
 
 #include "raylib.h"
-#include "Placeable.h"
+#include "Entity.h"
 #include "Plant.h"
 
-class Seed : public Placeable {
+class Seed : public Entity {
 public:
     Rectangle rec;   // Rectangle for seed dimensions
     Color color = ORANGE;     

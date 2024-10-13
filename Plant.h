@@ -1,10 +1,10 @@
 #pragma once
 
 #include "raylib.h"
-#include "Placeable.h"
+#include "Entity.h"
 #include <vector>
 
-class Plant : public Placeable {
+class Plant : public Entity {
 
 private:
     int health;

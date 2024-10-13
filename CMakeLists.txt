@@ -39,7 +39,7 @@ add_executable(${PROJECT_NAME}
     PvZ.cpp
     Gui.cpp
     Gui.h
-    Placeable.h
+    Entity.h
     Plant.cpp
     Plant.h
     Random.h

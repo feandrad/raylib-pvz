@@ -2,9 +2,9 @@
 
 #include "raylib.h"
 
-class Placeable {
+class Entity {
 public:
-    virtual ~Placeable() = default;  
+    virtual ~Entity() = default;  
 
     virtual void Draw() const = 0;   
     virtual void Update(float deltaTime) = 0;  
