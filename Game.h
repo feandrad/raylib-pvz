@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "Gui.h"
 #include "Entity.h"
+#include "Projectile.h"
 #include "Plant.h"
 #include "Seed.h"
 #include "Zombie.h"
@@ -50,9 +51,10 @@ private:
     Entity* board[gridRows][gridCols];
     Gui* gui;
     Font font;
-    std::vector<Zombie*> zombies;
-    std::vector<Entity*> projectiles;
-    int seedCount = 0;
+    std::vector<Zombie*> zombies;    
+    std::vector<float> laneYPositions;
+    std::vector<Projectile*> projectiles;
+    int seedCount = 1;
     float seedProgress = 0;
     int waveCount = 0;
     float nextWaveProgress = 0;

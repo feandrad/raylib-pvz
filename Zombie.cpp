@@ -1,30 +1,26 @@
 #include "Zombie.h"
 
-Zombie::Zombie() {
-    this->rec = {0, 0, float(70), float(70)};
-    this->color = RED;
-    this->speed = 50;
-    this->health = 100;
+Zombie::Zombie(ZombieStats z, Vector2 position) : stats(z), color(RED) {
+    this->position = position; 
 }
 
-Zombie::Zombie(float x, float y, float speed, int health) {
-    this->rec = {x, y, float(70), float(70)};
-    this->color = RED;
-    this->speed = speed;
-    this->health = health;
-}
-
-bool Zombie::IsDead() {
-    return health <= 0;
+bool Zombie::IsDead() const {
+    return stats.health <= 0;
 }
 
 void Zombie::Draw() const {
-    float centerX = rec.x + rec.width / 2;
-    float centerY = rec.y + rec.height / 2;
-
-    DrawCircle(centerX, centerY, 30, color);  
+    DrawRectangleRec(GetCollisionBoundary(), color); 
 }
 
 void Zombie::Update(float deltaTime) {
-    rec.x -= speed * deltaTime;  
+    position.x -= stats.speed * deltaTime; 
+}
+
+Rectangle Zombie::GetCollisionBoundary() const {
+    float adjustedY = position.y - stats.height / 2; 
+    return Rectangle{ position.x, adjustedY, stats.width, stats.height }; 
+}
+
+void Zombie::TakeDamage(int dmg) {
+    stats.health -= dmg; 
 }

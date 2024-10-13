@@ -28,7 +28,12 @@ void Game::LoadResources() {
 }
 
 void Game::InitGame() {
+    laneYPositions.resize(gridRows);
+    int startY = (GetScreenHeight() - totalHeight) / 2; 
+
     for (int i = 0; i < gridRows; i++) {
+        laneYPositions[i] = startY + (i * cellSize) + (cellSize / 2);
+
         for (int j = 0; j < gridCols; j++) {
             board[i][j] = nullptr; 
         }
@@ -61,8 +66,8 @@ void Game::HandleMouseInput() {
         if (gridY >= 0 && gridY < gridRows && gridX >= 0 && gridX < gridCols &&
             board[gridY][gridX] == nullptr) {
 
-            int x = gridX * cellSize + leftColumnWidth;
-            int y = gridY * cellSize + startY;
+            int x = gridX * cellSize + leftColumnWidth + cellSize / 2;
+            int y = gridY * cellSize + startY + cellSize / 2;
 
             std::cout << "Placing seed at (" << gridX << ", " << gridY << ")" << std::endl;
             board[gridY][gridX] = new Seed(x, y);
@@ -98,20 +103,29 @@ void Game::UpdateSeed(float deltaTime) {
 }
 
 void Game::UpdateEntities(float deltaTime) {
-    for (Zombie* z : zombies) {
+    for (auto* z : zombies) {
         z->Update(deltaTime);
     }
 
-    for (Entity* p : projectiles) {
-        p->Update(deltaTime);
+    for (size_t index = 0; index < projectiles.size(); ) {
+        Projectile* p = projectiles[index];
+        p->Update(deltaTime); 
+
+        if (!p->isActive) { 
+            delete p;
+            projectiles.erase(projectiles.begin() + index); 
+        } else {
+            ++index; 
+        }
     }
 }
 
+
 void Game::SpawnZombies() {
     for (int i = 0; i < gridRows; i++) {
-        float x = screenWidth; // Start at the far right of the screen
-        float y = (GetScreenHeight() - totalHeight) / 2 + i * cellSize; // Position according to lane
-        zombies.push_back(new Zombie(x, y, 50.0f, 100));
+        float x = screenWidth; 
+        float y = laneYPositions[i];
+        zombies.push_back(new Zombie(DEFAULT_ZOMBIE, {x, y}));
         std::cout << "Spawned Zombie at (" << x << ", " << y << ")" << std::endl;
     }
 }
@@ -126,11 +140,11 @@ void Game::UpdateWave(float deltaTime) {
 }
 
 void Game::DrawEntities() {
-    for (Zombie* z : zombies) {
+    for (auto* z : zombies) {
         z->Draw();
     }
 
-    for (Entity* p : projectiles) {
+    for (auto* p : projectiles) {
         p->Draw();
     }
 }

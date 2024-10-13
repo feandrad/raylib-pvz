@@ -1,35 +1,26 @@
 #include "Plant.h"
 
-Plant::Plant() {
-    this->rec = {0, 0, float(70), float(70)};
-    this->color = GREEN;
-    this->health = 100;
-    this->fireRate = 2;
-    this->lastShotTime = -fireRate;
+Plant::Plant(PlantStats pStats, float x, float y)
+    : stats(pStats), lastShotTime(0.0f), color(GREEN) {
+    this->position = {x, y};
 }
 
-Plant::Plant(float x, float y) {
-    this->rec = {x, y, float(70), float(70)};
-    this->color = GREEN;
-    this->health = 100;
-    this->fireRate = 2;
-    this->lastShotTime = -fireRate;
+bool Plant::CanShoot(float currentTime) const {
+    return currentTime - lastShotTime > stats.fireRate;
 }
 
-bool Plant::CanShoot(float currentTime) {
-    return currentTime - lastShotTime > fireRate;
-}
-
-void Plant::Shoot(std::vector<Rectangle>& projectiles, float currentTime) {
-    projectiles.push_back({rec.x + rec.width, rec.y + rec.height / 2 - 5, 10, 10});
+void Plant::Shoot(float currentTime) {
     lastShotTime = currentTime;
 }
 
+Rectangle Plant::GetCollisionBoundary() const {
+    float adjustedX = position.x - stats.width / 2; 
+    float adjustedY = position.y - stats.height / 2; 
+    return Rectangle{ adjustedX, adjustedY, stats.width, stats.height }; 
+}
+
+void Plant::Update(float deltaTime) {}
+
 void Plant::Draw() const {
-    DrawRectangleRec(rec, color);  
+    DrawRectangleRec(GetCollisionBoundary(), color); 
 }
-
-void Plant::Update(float deltaTime) {
-    
-}
-

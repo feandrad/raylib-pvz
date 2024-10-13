@@ -3,18 +3,30 @@
 #include "raylib.h"
 #include "Entity.h"
 
-class Zombie : Entity {
-public:
-    Rectangle rec;
-    Color color;
+struct ZombieStats {
+    float width;
+    float height;
     int health;
     float speed;
 
-    Zombie();  
-    Zombie(float x, float y, float speed, int health);  
+    ZombieStats(float width, float height, int health, float speed)
+        : width(width), height(height), health(health), speed(speed) {}
+};
 
-    bool IsDead();  
+class Zombie : Entity {
+
+public:
+    ZombieStats stats;
+    Color color;
+
+    Zombie(ZombieStats z, Vector2 position);
+
+    bool IsDead() const;  
+    Rectangle GetCollisionBoundary() const;
+    void TakeDamage(int dmg);
 
     void Draw() const override;
     void Update(float deltaTime) override;
 };
+
+static const ZombieStats DEFAULT_ZOMBIE = ZombieStats(50.0f, 70.0f, 5, 15.0f);
