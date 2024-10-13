@@ -35,8 +35,9 @@ endif()
 # Our Project
 
 add_executable(${PROJECT_NAME}
-    PvZ.h
-    PvZ.cpp
+    main.cpp
+    Game.h
+    Game.cpp
     Gui.cpp
     Gui.h
     Entity.h
@@ -47,7 +48,6 @@ add_executable(${PROJECT_NAME}
     Seed.h
     Zombie.cpp
     Zombie.h
-    res/pixantiqua.png
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

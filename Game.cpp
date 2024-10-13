@@ -1,14 +1,33 @@
-#include "PvZ.h"
-#include <iostream>
-#include <vector>
+#include "Game.h"
 
-void LoadResources() {
+Game::Game() {
+    LoadResources();
+    InitGame();
+}
+
+Game::~Game() {
+    for (Zombie* z : zombies) {
+        delete z; 
+    }
+    delete gui;
+}
+
+void Game::GameLoop() {
+    float deltaTime = GetFrameTime();
+    Update(deltaTime);
+    
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    Draw();
+    EndDrawing();
+}
+
+void Game::LoadResources() {
     font = LoadFont("res/pixelplay.png");
     gui = new Gui(&font);
 }
 
-void InitGame() {
-    // Initialize the grid
+void Game::InitGame() {
     for (int i = 0; i < gridRows; i++) {
         for (int j = 0; j < gridCols; j++) {
             board[i][j] = nullptr; 
@@ -16,8 +35,7 @@ void InitGame() {
     }
 }
 
-void DrawCheckerboard() {
-    // Calculate the starting Y position to center the checkerboard
+void Game::DrawCheckerboard() {
     int startY = (GetScreenHeight() - totalHeight) / 2;
 
     for (int i = 0; i < gridRows; i++) {
@@ -32,7 +50,7 @@ void DrawCheckerboard() {
     }
 }
 
-void HandleMouseInput() {
+void Game::HandleMouseInput() {
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && seedCount > 0) {
         Vector2 mousePos = GetMousePosition();
         
@@ -40,34 +58,29 @@ void HandleMouseInput() {
         int gridX = (mousePos.x - leftColumnWidth) / cellSize;
         int gridY = (mousePos.y - startY) / cellSize;
 
-        if (board[gridY][gridX] == nullptr &&
-            gridX >= 0 && gridX < gridCols && 
-            gridY >= 0 && gridY < gridRows) {
+        if (gridY >= 0 && gridY < gridRows && gridX >= 0 && gridX < gridCols &&
+            board[gridY][gridX] == nullptr) {
 
             int x = gridX * cellSize + leftColumnWidth;
             int y = gridY * cellSize + startY;
 
             std::cout << "Placing seed at (" << gridX << ", " << gridY << ")" << std::endl;
             board[gridY][gridX] = new Seed(x, y);
-
             seedCount--;
         }
     }
 }
 
-
-void UpdateBoard(float deltaTime) {
+void Game::UpdateBoard(float deltaTime) {
     for (int i = 0; i < gridRows; i++) {
         for (int j = 0; j < gridCols; j++) {
             if (board[i][j] != nullptr) {
-
                 if (Seed* seed = dynamic_cast<Seed*>(board[i][j])) {
                     seed->Update(deltaTime); 
                     if (seed->elapsedTime >= seed->incubationTime) {
                         board[i][j] = seed->plant; 
                         delete seed; 
                     }
-
                 } else if (Plant* plant = dynamic_cast<Plant*>(board[i][j])) {
                     plant->Update(deltaTime);
                 }
@@ -76,7 +89,7 @@ void UpdateBoard(float deltaTime) {
     }
 }
 
-void UpdateSeed(float deltaTime) {
+void Game::UpdateSeed(float deltaTime) {
     seedProgress += seedIncrement * deltaTime;
     if (seedProgress >= seedProgressMax) {
         seedProgress = 0;
@@ -84,7 +97,7 @@ void UpdateSeed(float deltaTime) {
     }
 }
 
-void UpdateEntities(float deltaTime) {
+void Game::UpdateEntities(float deltaTime) {
     for (Zombie* z : zombies) {
         z->Update(deltaTime);
     }
@@ -94,7 +107,7 @@ void UpdateEntities(float deltaTime) {
     }
 }
 
-void SpawnZombies() {
+void Game::SpawnZombies() {
     for (int i = 0; i < gridRows; i++) {
         float x = screenWidth; // Start at the far right of the screen
         float y = (GetScreenHeight() - totalHeight) / 2 + i * cellSize; // Position according to lane
@@ -103,7 +116,7 @@ void SpawnZombies() {
     }
 }
 
-void UpdateWave(float deltaTime) {
+void Game::UpdateWave(float deltaTime) {
     nextWaveProgress += nextWaveIncrement * deltaTime;
     if (nextWaveProgress >= nextWaveMax) {
         nextWaveProgress = 0;
@@ -112,7 +125,7 @@ void UpdateWave(float deltaTime) {
     }
 }
 
-void DrawEntities() {
+void Game::DrawEntities() {
     for (Zombie* z : zombies) {
         z->Draw();
     }
@@ -122,54 +135,24 @@ void DrawEntities() {
     }
 }
 
-void DrawUi() {
+void Game::DrawUi() {
     gui->Draw(seedProgress / seedProgressMax, nextWaveProgress / nextWaveMax);
 
     DrawText(TextFormat("Seeds: %d", seedCount), 10, 10, 10, MAROON);
-    // DrawText(TextFormat("Seed Progress: %f", seedProgress), 10, 20, 10, MAROON);
-    
     DrawText(TextFormat("Wave: %d", waveCount), 10, 30, 10, MAROON);
-    // DrawText(TextFormat("Wave Progress: %f", nextWaveProgress), 10, 40, 10, MAROON);
-
 }
 
-void DrawGame() {
+void Game::Draw() {
     DrawCheckerboard();
     DrawEntities();
     DrawUi();
 }
 
-void GameLoop() {
-    float deltaTime = GetFrameTime();
-
+void Game::Update(float deltaTime) {
     HandleMouseInput();
-
     UpdateBoard(deltaTime);
     UpdateSeed(deltaTime);
     UpdateWave(deltaTime);
     UpdateEntities(deltaTime);
     gui->Update(deltaTime);
-
-    BeginDrawing();
-
-    ClearBackground(RAYWHITE);
-    DrawGame();
-    
-    EndDrawing();
-}
-
-int main() {
-    InitWindow(screenWidth, screenHeight, "Plants vs Zombies-like Game - Checkerboard Field and Seed Bar");
-    SetTargetFPS(60);
-
-    LoadResources();
-
-    InitGame();
-
-    while (!WindowShouldClose()) {
-        GameLoop();
-    }
-
-    CloseWindow();
-    return 0;
 }
