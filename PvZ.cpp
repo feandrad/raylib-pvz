@@ -5,7 +5,7 @@ void LoadResources() {
     // std::cout << "Open Font..." << std::endl;
     // std::cin.get(); // Wait for user input
 
-    Font font = LoadFont("res/pixantiqua.png");
+    font = LoadFont("res/pixelplay.png");
     gui = new Gui(&font);
 }
 
@@ -34,16 +34,41 @@ void DrawCheckerboard() {
     }
 }
 
+void HandleMouseInput() {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        Vector2 mousePos = GetMousePosition();
+        
+        int startY = (GetScreenHeight() - totalHeight) / 2;
+        int gridX = (mousePos.x - leftColumnWidth) / cellSize;
+        int gridY = (mousePos.y - startY) / cellSize;
+
+        // Check if the click is within bounds and the cell is empty
+        if (board[gridY][gridX] == nullptr && 
+            gridX >= 0 && gridX < gridCols && 
+            gridY >= 0 && gridY < gridRows ) {
+
+            int x = gridX * cellSize + leftColumnWidth;
+            int y = gridY * cellSize + startY;
+
+            board[gridY][gridX] = new Seed(x, y);
+        }
+    }
+}
+
 void UpdateBoard(float deltaTime) {
     for (int i = 0; i < gridRows; i++) {
         for (int j = 0; j < gridCols; j++) {
             if (board[i][j] != nullptr) {
+
                 if (Seed* seed = dynamic_cast<Seed*>(board[i][j])) {
                     seed->Update(deltaTime); 
                     if (seed->elapsedTime >= seed->incubationTime) {
                         board[i][j] = seed->plant; 
                         delete seed; 
                     }
+
+                } else if (Plant* plant = dynamic_cast<Plant*>(board[i][j])) {
+                    plant->Update(deltaTime);
                 }
             }
         }
@@ -69,8 +94,12 @@ void UpdateWave(float deltaTime) {
 void DrawGame() {
     DrawCheckerboard();
     gui->Draw(seedProgress / seedProgressMax, nextWaveProgress / nextWaveMax);
-    DrawText(TextFormat("Seeds: %d", seedCount), 10, 10, 10, MAROON);
+
+    DrawTextEx(font, TextFormat("Seeds: %d", seedCount), {10, 10}, 10, 4, MAROON);
     DrawText(TextFormat("Seed Progress: %f", seedProgress), 10, 20, 10, MAROON);
+    
+
+    // void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
 
     DrawText(TextFormat("Wave: %d", waveCount), 10, 30, 10, MAROON);
     DrawText(TextFormat("Wave Progress: %f", nextWaveProgress), 10, 40, 10, MAROON);

@@ -35,6 +35,7 @@ float nextWaveProgress = 0;
 
 Placeable* board[gridRows][gridCols];
 Gui* gui;
+Font font;
 
 // Function Declarations
 void InitGame();

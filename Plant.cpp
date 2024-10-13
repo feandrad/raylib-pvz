@@ -24,3 +24,12 @@ void Plant::Shoot(std::vector<Rectangle>& projectiles, float currentTime) {
     projectiles.push_back({rec.x + rec.width, rec.y + rec.height / 2 - 5, 10, 10});
     lastShotTime = currentTime;
 }
+
+void Plant::Draw() const {
+    DrawRectangleRec(rec, color);  
+}
+
+void Plant::Update(float deltaTime) {
+    
+}
+

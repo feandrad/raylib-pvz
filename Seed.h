@@ -13,7 +13,7 @@ public:
     float elapsedTime;    // Elapsed time since the seed was planted
     Plant* plant;         // Pointer to the Plant it will become
 
-    Seed(float x, float y, Plant* plantToTransform); 
+    Seed(float x, float y); 
 
     void Draw() const override;
     void Update(float deltaTime) override;
