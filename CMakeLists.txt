@@ -48,6 +48,8 @@ add_executable(${PROJECT_NAME}
     Seed.h
     Zombie.cpp
     Zombie.h
+    Projectile.h
+    Projectile.cpp
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

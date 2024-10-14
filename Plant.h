@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "Entity.h"
+#include "Projectile.h"
 #include <vector>
 
 struct PlantStats {
@@ -20,14 +21,16 @@ private:
     Color color;
 
 public:
-    float lastShotTime; 
+    float attackCooldown; 
 
-    Plant(PlantStats pStats, float x, float y); 
+    Plant(PlantStats pStats, float x, float y) : stats(pStats), attackCooldown(0.0f), color(GREEN) {
+        this->position = {x, y};
+    }
 
     bool GetHealth() const { return stats.health; } 
 
-    bool CanShoot(float currentTime) const; 
-    void Shoot(float currentTime); 
+    bool CanAttack() const; 
+    Projectile* Attack(); 
     Rectangle GetCollisionBoundary() const;
 
     void Draw() const override;

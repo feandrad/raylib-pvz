@@ -1,7 +1,7 @@
 #include "Projectile.h"
 
 void Projectile::Update(float deltaTime) {
-    position.x += speed * deltaTime; 
+    position.x += stats.speed * deltaTime; 
     if (position.x > GetScreenWidth()) {
         isActive = false; // Mark inactive if it goes off-screen
     }

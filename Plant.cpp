@@ -1,16 +1,16 @@
 #include "Plant.h"
+#include <iostream>
 
-Plant::Plant(PlantStats pStats, float x, float y)
-    : stats(pStats), lastShotTime(0.0f), color(GREEN) {
-    this->position = {x, y};
+bool Plant::CanAttack() const {
+    return attackCooldown > stats.fireRate;
 }
 
-bool Plant::CanShoot(float currentTime) const {
-    return currentTime - lastShotTime > stats.fireRate;
-}
+Projectile* Plant::Attack() {
+    attackCooldown = 0.0f;
 
-void Plant::Shoot(float currentTime) {
-    lastShotTime = currentTime;
+    float adjustedX = position.x - stats.width / 2; 
+    float adjustedY = position.y - stats.height / 2; 
+    return new Projectile(DEFAULT_PROJECTILE, {position.x, position.y});
 }
 
 Rectangle Plant::GetCollisionBoundary() const {
@@ -19,7 +19,10 @@ Rectangle Plant::GetCollisionBoundary() const {
     return Rectangle{ adjustedX, adjustedY, stats.width, stats.height }; 
 }
 
-void Plant::Update(float deltaTime) {}
+void Plant::Update(float deltaTime) {
+    attackCooldown += deltaTime;
+    // std::cout << "Cooldown ( " << attackCooldown << " / " << stats.fireRate << " )" << std::endl;
+}
 
 void Plant::Draw() const {
     DrawRectangleRec(GetCollisionBoundary(), color); 

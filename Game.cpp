@@ -40,21 +40,6 @@ void Game::InitGame() {
     }
 }
 
-void Game::DrawCheckerboard() {
-    int startY = (GetScreenHeight() - totalHeight) / 2;
-
-    for (int i = 0; i < gridRows; i++) {
-        for (int j = 0; j < gridCols; j++) {
-            Color color = (i + j) % 2 == 0 ? LIGHTGRAY : RAYWHITE; 
-            DrawRectangle(j * cellSize + leftColumnWidth, startY + i * cellSize, cellSize, cellSize, color); 
-
-            if (board[i][j] != nullptr) {
-                board[i][j]->Draw(); 
-            }
-        }
-    }
-}
-
 void Game::HandleMouseInput() {
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && seedCount > 0) {
         Vector2 mousePos = GetMousePosition();
@@ -88,6 +73,10 @@ void Game::UpdateBoard(float deltaTime) {
                     }
                 } else if (Plant* plant = dynamic_cast<Plant*>(board[i][j])) {
                     plant->Update(deltaTime);
+                    if (plant->CanAttack()) {
+                        Projectile* shot = plant->Attack();
+                        projectiles.push_back(shot);
+                    }
                 }
             }
         }
@@ -103,20 +92,12 @@ void Game::UpdateSeed(float deltaTime) {
 }
 
 void Game::UpdateEntities(float deltaTime) {
-    for (auto* z : zombies) {
-        z->Update(deltaTime);
+    for (auto* pr : projectiles){
+        pr->Update(deltaTime);
     }
 
-    for (size_t index = 0; index < projectiles.size(); ) {
-        Projectile* p = projectiles[index];
-        p->Update(deltaTime); 
-
-        if (!p->isActive) { 
-            delete p;
-            projectiles.erase(projectiles.begin() + index); 
-        } else {
-            ++index; 
-        }
+    for (auto* z : zombies) {
+        z->Update(deltaTime);
     }
 }
 
@@ -139,6 +120,21 @@ void Game::UpdateWave(float deltaTime) {
     }
 }
 
+void Game::DrawCheckerboard() {
+    int startY = (GetScreenHeight() - totalHeight) / 2;
+
+    for (int i = 0; i < gridRows; i++) {
+        for (int j = 0; j < gridCols; j++) {
+            Color color = (i + j) % 2 == 0 ? LIGHTGRAY : RAYWHITE; 
+            DrawRectangle(j * cellSize + leftColumnWidth, startY + i * cellSize, cellSize, cellSize, color); 
+
+            if (board[i][j] != nullptr) {
+                board[i][j]->Draw(); 
+            }
+        }
+    }
+}
+
 void Game::DrawEntities() {
     for (auto* z : zombies) {
         z->Draw();
@@ -156,12 +152,6 @@ void Game::DrawUi() {
     DrawText(TextFormat("Wave: %d", waveCount), 10, 30, 10, MAROON);
 }
 
-void Game::Draw() {
-    DrawCheckerboard();
-    DrawEntities();
-    DrawUi();
-}
-
 void Game::Update(float deltaTime) {
     HandleMouseInput();
     UpdateBoard(deltaTime);
@@ -169,4 +159,10 @@ void Game::Update(float deltaTime) {
     UpdateWave(deltaTime);
     UpdateEntities(deltaTime);
     gui->Update(deltaTime);
+}
+
+void Game::Draw() {
+    DrawCheckerboard();
+    DrawEntities();
+    DrawUi();
 }

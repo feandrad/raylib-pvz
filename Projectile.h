@@ -1,22 +1,30 @@
+#pragma once
+
 #include "raylib.h"
 #include "Entity.h"
 #include "Zombie.h"
 
+struct ProjectileStats {
+    float speed;
+    float radius;
+
+    ProjectileStats(float speed, float radius)
+        : speed(speed), radius(radius) {}
+};
+
 class Projectile : public Entity {
 public:
-    float speed;      
-    bool isActive;    
+    bool isActive;
+    ProjectileStats stats;
+    Color color;
 
-    Projectile(float x, float y, float speed)
-        : speed(speed), isActive(true) {
-        position = { x, y }; 
+    Projectile(ProjectileStats stats, Vector2 position) : stats(stats), color(YELLOW) {
+        this->position = position;
     }
 
-    CollisionType GetCollisionType() override {
-        return CollisionType::Point; 
-    }
-
-    void Update(float deltaTime);
+    void Update(float deltaTime) override;
     void Draw() const override;
     void OnCollision(Entity* other);
 };
+
+static const ProjectileStats DEFAULT_PROJECTILE = ProjectileStats(500.0f, 5.0f);
