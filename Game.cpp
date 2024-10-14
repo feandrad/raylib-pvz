@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Random.h"
 
 Game::Game() {
     LoadResources();
@@ -101,13 +102,13 @@ void Game::UpdateEntities(float deltaTime) {
     }
 }
 
-
 void Game::SpawnZombies() {
-    for (int i = 0; i < gridRows; i++) {
+    for (int i = 0; i < waveCount; i++) {
+        int lane = Random::Int(gridRows - 1); 
         float x = screenWidth; 
-        float y = laneYPositions[i];
+        float y = laneYPositions[lane]; 
         zombies.push_back(new Zombie(DEFAULT_ZOMBIE, {x, y}));
-        std::cout << "Spawned Zombie at (" << x << ", " << y << ")" << std::endl;
+        std::cout << "Spawned Zombie at (" << x << ", " << y << ") in lane " << lane << std::endl;
     }
 }
 
