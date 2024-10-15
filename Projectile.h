@@ -7,9 +7,10 @@
 struct ProjectileStats {
     float speed;
     float radius;
+    int dmg;
 
-    ProjectileStats(float speed, float radius)
-        : speed(speed), radius(radius) {}
+    ProjectileStats(float speed, float radius, int dmg)
+        : speed(speed), radius(radius), dmg(dmg) {}
 };
 
 class Projectile : public Entity {
@@ -24,7 +25,7 @@ public:
 
     void Update(float deltaTime) override;
     void Draw() const override;
-    void OnCollision(Entity* other);
+    void OnCollision(Zombie* zombie);
 };
 
-static const ProjectileStats DEFAULT_PROJECTILE = ProjectileStats(500.0f, 5.0f);
+static const ProjectileStats DEFAULT_PROJECTILE = ProjectileStats(500.0f, 5.0f, 1);

@@ -4,7 +4,8 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Plants vs Zombies-like Game - Checkerboard Field and Seed Bar");
     SetTargetFPS(60);
 
-    Game game;
+    Font font = LoadFont("res/pixelplay.png");
+    Game game = Game(font);
 
     while (!WindowShouldClose()) {
         game.GameLoop();

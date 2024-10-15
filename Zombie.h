@@ -13,13 +13,15 @@ struct ZombieStats {
         : width(width), height(height), health(health), speed(speed) {}
 };
 
-class Zombie : Entity {
+class Zombie : public Entity {
 
 public:
     ZombieStats stats;
     Color color;
 
-    Zombie(ZombieStats z, Vector2 position);
+    Zombie(ZombieStats z, Vector2 position) : stats(z), color(RED) {
+        this->position = position; 
+    }
 
     bool IsDead() const;  
     Rectangle GetCollisionBoundary() const;

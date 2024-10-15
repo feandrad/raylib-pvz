@@ -7,10 +7,11 @@
 #include "Plant.h"
 #include "Seed.h"
 #include "Zombie.h"
-#include <vector>
+#include "EntityPool.h"
+
+#include <algorithm>
 #include <iostream>
 
-// Game Constants
 const int screenWidth = 800;
 const int screenHeight = 450;
 const int gridRows = 5;
@@ -28,18 +29,22 @@ const float nextWaveIncrement = nextWaveMax / nextWave;
 
 class Game {
 public:
-    Game();
-    ~Game();
-    
-    void LoadResources();
-    void InitGame();
+    Game(Font font);
+    ~Game() = default;
     void GameLoop();
-    
+
+private:
+    int seedCount = 1;
+    float seedProgress = 0;
+    int waveCount = 0;
+    float nextWaveProgress = 0;
+
 private:
     void Update(float deltaTime);
     void Draw();
     void DrawCheckerboard();
     void HandleMouseInput();
+    void CheckProjectileCollisions();
     void UpdateBoard(float deltaTime);
     void UpdateSeed(float deltaTime);
     void UpdateEntities(float deltaTime);
@@ -48,14 +53,9 @@ private:
     void DrawEntities();
     void DrawUi();
 
-    Entity* board[gridRows][gridCols];
-    Gui* gui;
-    Font font;
-    std::vector<Zombie*> zombies;    
+    Gui gui;
+    Entity *board[gridRows][gridCols];
     std::vector<float> laneYPositions;
-    std::vector<Projectile*> projectiles;
-    int seedCount = 1;
-    float seedProgress = 0;
-    int waveCount = 0;
-    float nextWaveProgress = 0;
+    EntityPool entityPool;
+    std::unordered_map<Entity*, int> entityLaneMap;
 };

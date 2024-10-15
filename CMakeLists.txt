@@ -50,6 +50,7 @@ add_executable(${PROJECT_NAME}
     Zombie.h
     Projectile.h
     Projectile.cpp
+    EntityPool.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

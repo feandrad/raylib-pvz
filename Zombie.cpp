@@ -1,8 +1,5 @@
 #include "Zombie.h"
-
-Zombie::Zombie(ZombieStats z, Vector2 position) : stats(z), color(RED) {
-    this->position = position; 
-}
+#include <iostream>
 
 bool Zombie::IsDead() const {
     return stats.health <= 0;
@@ -23,4 +20,5 @@ Rectangle Zombie::GetCollisionBoundary() const {
 
 void Zombie::TakeDamage(int dmg) {
     stats.health -= dmg; 
+    std::cout << "Zombie dmg: " << stats.health << std::endl;
 }

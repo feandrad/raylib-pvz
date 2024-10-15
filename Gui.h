@@ -13,9 +13,9 @@ public:
     float barHeight = 10;
     float fillSpeed = 10;
 
-    Font* font;
+    Font font;
 
-    Gui(Font* font) : font(font) {}
+    Gui(Font font) : font(font) {}
 
     void Draw(float seedRate, float waveRate);
     void Update(float deltaTime);

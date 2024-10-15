@@ -11,11 +11,7 @@ void Projectile::Draw() const {
     DrawCircle(static_cast<int>(position.x), static_cast<int>(position.y), 5.0f, MAROON);
 }
 
-void Projectile::OnCollision(Entity* other) {
-    if (Zombie* zombie = dynamic_cast<Zombie*>(other)) {
-        if (CheckCollisionPointRec(position, zombie->GetCollisionBoundary())) {
-            zombie->TakeDamage(10); 
-            isActive = false; 
-        }
-    }
+void Projectile::OnCollision(Zombie* zombie) {
+    zombie->TakeDamage(stats.dmg); 
+    isActive = false; 
 }

@@ -1,34 +1,7 @@
 #include "Game.h"
 #include "Random.h"
 
-Game::Game() {
-    LoadResources();
-    InitGame();
-}
-
-Game::~Game() {
-    for (Zombie* z : zombies) {
-        delete z; 
-    }
-    delete gui;
-}
-
-void Game::GameLoop() {
-    float deltaTime = GetFrameTime();
-    Update(deltaTime);
-    
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    Draw();
-    EndDrawing();
-}
-
-void Game::LoadResources() {
-    font = LoadFont("res/pixelplay.png");
-    gui = new Gui(&font);
-}
-
-void Game::InitGame() {
+Game::Game(Font font) : gui(Gui(font)) {
     laneYPositions.resize(gridRows);
     int startY = (GetScreenHeight() - totalHeight) / 2; 
 
@@ -39,6 +12,17 @@ void Game::InitGame() {
             board[i][j] = nullptr; 
         }
     }
+}
+
+void Game::GameLoop() {
+    float deltaTime = GetFrameTime();
+    Update(deltaTime);
+    CheckProjectileCollisions();
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    Draw();
+    EndDrawing();
 }
 
 void Game::HandleMouseInput() {
@@ -56,11 +40,21 @@ void Game::HandleMouseInput() {
             int y = gridY * cellSize + startY + cellSize / 2;
 
             std::cout << "Placing seed at (" << gridX << ", " << gridY << ")" << std::endl;
-            board[gridY][gridX] = new Seed(x, y);
+
+            Seed* seed = entityPool.CreateEntity<Seed>(x, y);
+
+            board[gridY][gridX] = seed;
+            entityLaneMap[seed] = gridY; 
+
             seedCount--;
         }
     }
 }
+
+void Game::CheckProjectileCollisions() {
+    // Add collision logic here
+}
+
 
 void Game::UpdateBoard(float deltaTime) {
     for (int i = 0; i < gridRows; i++) {
@@ -70,13 +64,14 @@ void Game::UpdateBoard(float deltaTime) {
                     seed->Update(deltaTime); 
                     if (seed->elapsedTime >= seed->incubationTime) {
                         board[i][j] = seed->plant; 
-                        delete seed; 
+                        entityLaneMap.erase(seed);  
+                        entityPool.DestroyEntity(seed); 
                     }
                 } else if (Plant* plant = dynamic_cast<Plant*>(board[i][j])) {
                     plant->Update(deltaTime);
                     if (plant->CanAttack()) {
                         Projectile* shot = plant->Attack();
-                        projectiles.push_back(shot);
+                        entityLaneMap[shot] = i;
                     }
                 }
             }
@@ -93,12 +88,8 @@ void Game::UpdateSeed(float deltaTime) {
 }
 
 void Game::UpdateEntities(float deltaTime) {
-    for (auto* pr : projectiles){
-        pr->Update(deltaTime);
-    }
-
-    for (auto* z : zombies) {
-        z->Update(deltaTime);
+    for (auto& [entity, lane] : entityLaneMap) {
+        entity->Update(deltaTime);
     }
 }
 
@@ -107,7 +98,10 @@ void Game::SpawnZombies() {
         int lane = Random::Int(gridRows - 1); 
         float x = screenWidth; 
         float y = laneYPositions[lane]; 
-        zombies.push_back(new Zombie(DEFAULT_ZOMBIE, {x, y}));
+
+        Zombie* zombie = entityPool.CreateEntity<Zombie>(DEFAULT_ZOMBIE, Vector2{x, y});
+        entityLaneMap[zombie] = lane;
+
         std::cout << "Spawned Zombie at (" << x << ", " << y << ") in lane " << lane << std::endl;
     }
 }
@@ -137,17 +131,13 @@ void Game::DrawCheckerboard() {
 }
 
 void Game::DrawEntities() {
-    for (auto* z : zombies) {
-        z->Draw();
-    }
-
-    for (auto* p : projectiles) {
-        p->Draw();
+    for (auto& [entity, lane] : entityLaneMap) {
+        entity->Draw();
     }
 }
 
 void Game::DrawUi() {
-    gui->Draw(seedProgress / seedProgressMax, nextWaveProgress / nextWaveMax);
+    gui.Draw(seedProgress / seedProgressMax, nextWaveProgress / nextWaveMax);
 
     DrawText(TextFormat("Seeds: %d", seedCount), 10, 10, 10, MAROON);
     DrawText(TextFormat("Wave: %d", waveCount), 10, 30, 10, MAROON);
@@ -159,7 +149,7 @@ void Game::Update(float deltaTime) {
     UpdateSeed(deltaTime);
     UpdateWave(deltaTime);
     UpdateEntities(deltaTime);
-    gui->Update(deltaTime);
+    gui.Update(deltaTime);
 }
 
 void Game::Draw() {
